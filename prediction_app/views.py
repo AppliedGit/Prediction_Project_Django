@@ -173,7 +173,8 @@ def get_auth_token(request):
     else:
         settings.TOKEN_STATUS = "Invalid User"
         return render(request,'login.html',context={'login_status':"Invalid User"})        
-    return redirect("/ed74cf28e117c5f6dc9d4b8dfd76a7728d86000884abe0bffab1b9c881e0006ca6e057331ec536449b407bb0c5d4d947caff50d94e44772eccb6e6ad155e1a71")  
+    #return redirect("/ed74cf28e117c5f6dc9d4b8dfd76a7728d86000884abe0bffab1b9c881e0006ca6e057331ec536449b407bb0c5d4d947caff50d94e44772eccb6e6ad155e1a71")  
+    return render(request,'prediction.html')
 
 def get_unique_numbers(numbers):
     list_of_unique_numbers = []

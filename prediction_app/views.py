@@ -1,4 +1,5 @@
 from django.shortcuts import render,HttpResponse,redirect
+from django.views.decorators.cache import cache_control
 from django.conf import settings
 import json
 import requests
@@ -77,15 +78,18 @@ def get_prediction_value(request):
 def index(request):        
     return render(request,'prediction.html')
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def login(request):                        
     return render(request,'login.html')
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def token_error(request):
     return render(request,'login.html',context={'login_status': settings.TOKEN_STATUS}) 
 
 def token_status(request):
     return HttpResponse(settings.TOKEN_STATUS)
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def logout(request):
     settings.TOKEN_STATUS = ""
     settings.TOKEN_NAME = ""

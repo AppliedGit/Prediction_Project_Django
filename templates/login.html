@@ -27,7 +27,27 @@
             color: #ffffff !important;
         }
     </style>
-    
+<script>
+        function token_process() 
+        {            
+            var username = $("#username").val();
+            var password = $("#password").val();            
+            $.ajax({
+                url: "/get_token?username="+username+"&password="+password,                
+                success: function (result) 
+                {                                        
+                    if (result === "51e85deb51c2b909a21ec5b8e83b1cb28da258b1be227620105a345a2bd4c6aea549cd5429670f2df33324667b9f623a420b3a0bdbbd03ad48602211e75478a7")
+                    {
+                        $("#login_form").submit();                        
+                    }
+                    else
+                    {
+                        $("#lbl_status").text(result);
+                    }
+                }
+            });
+        } 
+    </script>    
 
 </head>
 
@@ -68,7 +88,7 @@
                               
                             </div>                            
                             <div class="d-grid gap-2">
-                                <button class="btn btn-primary text-uppercase " type="submit">Submit</button>
+                                <button class="btn btn-primary text-uppercase " onclick="token_process();" type="button" >Submit</button>
                             </div>
                             <div class="d-grid gap-2" style="padding-top: 5px;">
                                 <label id="lbl_status" style="color: red;text-align: center;">{{login_status}}</label>

@@ -158,9 +158,9 @@ def get_prediction_table_data(request):
 def get_auth_token(request):            
     uname_hash = 'c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd472634dfac71cd34ebc35d16ab7fb8a90c81f975113d6c7538dc69dd8de9077ec'      
     password_hash = '263d198e179108ea11ade755d21829b31eb6744f888c77b4bf704472eb70020eed618bbf2b43883484356a2a315b98f622bcdefdafc465e7aaba1a12cef2b0f6'       
-    auth_pwd = request.POST["password"].encode('utf-8')
+    auth_pwd = request.GET["password"].encode('utf-8')
     auth_password_hash = hashlib.sha512(auth_pwd).hexdigest() 
-    auth_uname = request.POST["username"].encode('utf-8')
+    auth_uname = request.GET["username"].encode('utf-8')
     auth_uname_hash = hashlib.sha512(auth_uname).hexdigest() 
     result = "Token is invalid!"   
     settings.TOKEN_STATUS = "Token is invalid!"

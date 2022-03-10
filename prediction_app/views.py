@@ -75,6 +75,7 @@ def get_prediction_value(request):
     prediction = model.predict([[Present_Price,Kms_Driven,Owner,Year,Fuel_Type_CNG,Fuel_Type_Diesel,Fuel_Type_Petrol,Seller_Type_Dealer,Seller_Type_Individual,Transmission_Automatic,Transmission_Mannual]])
     return HttpResponse(json.dumps({'token_status': '','prediction_val' : prediction[0]}))
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def index(request):        
     return render(request,'prediction.html')
 
@@ -153,6 +154,7 @@ def get_prediction_table_data(request):
     "max_selling_price" : max(selling_price),"max_showroom_price":max(present_price),"unique_car":get_unique_numbers(car_name)}        
     return HttpResponse(json.dumps(prediction_result))
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def get_auth_token(request):            
     uname_hash = 'c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd472634dfac71cd34ebc35d16ab7fb8a90c81f975113d6c7538dc69dd8de9077ec'      
     password_hash = '263d198e179108ea11ade755d21829b31eb6744f888c77b4bf704472eb70020eed618bbf2b43883484356a2a315b98f622bcdefdafc465e7aaba1a12cef2b0f6'       
@@ -161,6 +163,7 @@ def get_auth_token(request):
     auth_uname = request.POST["username"].encode('utf-8')
     auth_uname_hash = hashlib.sha512(auth_uname).hexdigest() 
     result = "Token is invalid!"   
+    settings.TOKEN_STATUS = "Token is invalid!"
     if auth_uname_hash == uname_hash and auth_password_hash == password_hash: 
         secret_key = str(uuid.uuid4().hex)        
         unique_id = str(uuid.uuid4().hex)
@@ -170,15 +173,16 @@ def get_auth_token(request):
             result = token
             settings.TOKEN_NAME = result
             settings.TOKEN_KEY = secret_key
-            settings.TOKEN_STATUS = "Success"
+            settings.TOKEN_STATUS = "51e85deb51c2b909a21ec5b8e83b1cb28da258b1be227620105a345a2bd4c6aea549cd5429670f2df33324667b9f623a420b3a0bdbbd03ad48602211e75478a7"
         except Exception as e:                       
             settings.TOKEN_STATUS = "Error : "+str(e)            
-            return render(request,'login.html',context={'login_status':str(e) })
+            #return render(request,'login.html',context={'login_status':str(e) })
     else:
         settings.TOKEN_STATUS = "Invalid User"
-        return render(request,'login.html',context={'login_status':"Invalid User"})        
+    return HttpResponse(settings.TOKEN_STATUS)
+        #return render(request,'login.html',context={'login_status':"Invalid User"})        
     #return redirect("/ed74cf28e117c5f6dc9d4b8dfd76a7728d86000884abe0bffab1b9c881e0006ca6e057331ec536449b407bb0c5d4d947caff50d94e44772eccb6e6ad155e1a71")  
-    return render(request,'prediction.html')
+    #return render(request,'prediction.html')
 
 def get_unique_numbers(numbers):
     list_of_unique_numbers = []

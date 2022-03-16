@@ -319,7 +319,16 @@
 
 
 
-        function calculate_selling_price() {
+        function calculate_selling_price() 
+        {
+            if(sessionStorage.getItem("45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591") !== "9f02f775abea162963140b0c9945229c8fd57d32563fe586540d00d6c984724ddf069e3ef3d2f147a01ce91c19836ea22e66987e33523c2fb3d90cc7bbcd28c8")
+            {
+                if(sessionStorage.getItem("45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591") == null ||sessionStorage.getItem("45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591") !== "51e85deb51c2b909a21ec5b8e83b1cb28da258b1be227620105a345a2bd4c6aea549cd5429670f2df33324667b9f623a420b3a0bdbbd03ad48602211e75478a7")
+                {
+                    sessionStorage.setItem("45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591","Token is missing");
+                    window.location.replace("/d7001cd8ba54d9f28d9b67be256a29ee4ed36da74d45055eaf0c4c0859c3ce9e62e8773ba7f77909b8dc3bd13ef0a67930f954bec6cdf4089013c2c2122e9e35/");
+                }
+            }
             $("#lbl_error").text(""); $("#lbl_error").show(); $("#lbl_prediction").hide();
             var year = $("#year").val();
             var showroom_price = $("#showroom_price").val();
@@ -353,12 +362,13 @@
             $("#lbl_error").text(""); $("#lbl_error").hide();
             document.getElementById("overlay").style.display = "flex";
             $.ajax({
-                url: "/get_prediction_value", data: { year: year, showroom_price: showroom_price, driven_kms: driven_kms, owner_type: owner_type, fuel_type: fuel_type, seller_type: seller_type, transmission_type: transmission_type },
+                url: "/get_prediction_value", data: { "b9297e16791de8e8bff0fb7870682121f94fd89acfd8506be4662e238495141916eed2100b21724a35927e0e7867007c470564c80bf7d9a971d490b817a05e31" : sessionStorage.getItem("b9297e16791de8e8bff0fb7870682121f94fd89acfd8506be4662e238495141916eed2100b21724a35927e0e7867007c470564c80bf7d9a971d490b817a05e31"),
+                    year: year, showroom_price: showroom_price, driven_kms: driven_kms, owner_type: owner_type, fuel_type: fuel_type, seller_type: seller_type, transmission_type: transmission_type},
                 dataType: "json",
                 success: function (result) {
                     document.getElementById("overlay").style.display = "none";
                     var token_status = (result["token_status"]);
-                    if (token_status === "Token is missing" || token_status === "Token is Invalid" || token_status.startsWith("Error"))
+                    if (token_status === "Token is missing" || token_status === "Token is Invalid" || token_status === "Token has expired" || token_status.startsWith("Error"))
                         window.location.replace("/d7001cd8ba54d9f28d9b67be256a29ee4ed36da74d45055eaf0c4c0859c3ce9e62e8773ba7f77909b8dc3bd13ef0a67930f954bec6cdf4089013c2c2122e9e35/");
                     else {
                         $("#lbl_prediction").show(); $("#prediction_result").text(parseFloat(result["prediction_val"]).toFixed(3));
@@ -370,6 +380,16 @@
         }
 
         function display_data_table() {
+
+            if(sessionStorage.getItem("45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591") !== "9f02f775abea162963140b0c9945229c8fd57d32563fe586540d00d6c984724ddf069e3ef3d2f147a01ce91c19836ea22e66987e33523c2fb3d90cc7bbcd28c8")
+            {
+                if(sessionStorage.getItem("45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591") == null ||sessionStorage.getItem("45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591") !== "51e85deb51c2b909a21ec5b8e83b1cb28da258b1be227620105a345a2bd4c6aea549cd5429670f2df33324667b9f623a420b3a0bdbbd03ad48602211e75478a7")
+                {
+                    sessionStorage.setItem("45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591","Token is missing");
+                    window.location.replace("/d7001cd8ba54d9f28d9b67be256a29ee4ed36da74d45055eaf0c4c0859c3ce9e62e8773ba7f77909b8dc3bd13ef0a67930f954bec6cdf4089013c2c2122e9e35/");
+                }
+            }            
+
             $("#year").val("");
             $("#showroom_price").val("");
             $("#driven_kms").val("");
@@ -382,12 +402,17 @@
             var age_arr = [];
             $.ajax({
                 url: "/get_prediction_table_data",
+                data : {"b9297e16791de8e8bff0fb7870682121f94fd89acfd8506be4662e238495141916eed2100b21724a35927e0e7867007c470564c80bf7d9a971d490b817a05e31" : sessionStorage.getItem("b9297e16791de8e8bff0fb7870682121f94fd89acfd8506be4662e238495141916eed2100b21724a35927e0e7867007c470564c80bf7d9a971d490b817a05e31")},
                 dataType: "json",
                 success: function (result) {
                     var token_status = (result["token_status"]);
-                    if (token_status === "Token is missing" || token_status === "Token is Invalid" || token_status.startsWith("Error"))
+                    if (token_status === "Token is missing" || token_status === "Token is Invalid" || token_status === "Token has expired"  || token_status.startsWith("Error"))
+                    {
+                        //sessionStorage.setItem("45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591",token_status);
                         window.location.replace("/d7001cd8ba54d9f28d9b67be256a29ee4ed36da74d45055eaf0c4c0859c3ce9e62e8773ba7f77909b8dc3bd13ef0a67930f954bec6cdf4089013c2c2122e9e35/");
+                    }                        
                     else {
+                        sessionStorage.setItem("45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591","9f02f775abea162963140b0c9945229c8fd57d32563fe586540d00d6c984724ddf069e3ef3d2f147a01ce91c19836ea22e66987e33523c2fb3d90cc7bbcd28c8");
                         var html = "";
                         $("#tbl_prediction tbody").empty();
                         $("#tbl_prediction").DataTable().clear().destroy();
@@ -474,6 +499,22 @@
                 }
             });
         }  
+function logout_process()
+{        
+    $.ajax({
+        url: "/logout",
+        data : {"b9297e16791de8e8bff0fb7870682121f94fd89acfd8506be4662e238495141916eed2100b21724a35927e0e7867007c470564c80bf7d9a971d490b817a05e31" : sessionStorage.getItem("b9297e16791de8e8bff0fb7870682121f94fd89acfd8506be4662e238495141916eed2100b21724a35927e0e7867007c470564c80bf7d9a971d490b817a05e31")},        
+        success: function (result) 
+        {                        
+            if(result === "78661b2fac117e9c9764a46403d20579e49974a5aa004922573cf08150c16de8365196319d6662187bde83ae9d6669956a13e2ea22ddb801e15df3887b2252ec")
+            {                
+                sessionStorage.removeItem("b9297e16791de8e8bff0fb7870682121f94fd89acfd8506be4662e238495141916eed2100b21724a35927e0e7867007c470564c80bf7d9a971d490b817a05e31");
+                sessionStorage.removeItem("45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591");                
+                window.location.replace("/login/");
+            }
+        }
+    });
+}
     </script>
 </head>
 
@@ -507,7 +548,7 @@
                         <a style="text-decoration: none;color: #ffffff;" class="align-self-center">Welcome
                             Admin</a>&emsp;
                         <a onclick="display_data_table();" class="btn btn-sm btn-primary">Refresh</a></li>&emsp;
-                        <a href="/logout" class="btn btn-sm btn-danger">Logout</a>
+                        <a href="javascript:logout_process();" class="btn btn-sm btn-danger">Logout</a>
                     </form>
                 </div>
             </div>

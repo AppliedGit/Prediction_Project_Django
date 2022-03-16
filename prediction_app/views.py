@@ -23,15 +23,27 @@ model = pickle.load(open(source_path+'/random_forest_regression_model.pkl', 'rb'
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):        
-        secret_key = settings.TOKEN_KEY
-        token = settings.TOKEN_NAME                                
+        secret_key = settings.TOKEN_KEY        
+        auth_time = str(args[0])
+        auth_time = auth_time.replace("'","")
+        auth_time = auth_time.replace(">","")
+        auth_time = auth_time.split("=")
+        auth_time = auth_time[1]
+        auth_time = auth_time.split("&")
+        auth_time = auth_time[0]
+        token = ""
+        if auth_time in settings.TOKEN_DIC:
+            token = settings.TOKEN_DIC[auth_time]                              
         if not token:            
             settings.TOKEN_STATUS = "Token is missing"            
             return HttpResponse(json.dumps({'token_status' : settings.TOKEN_STATUS}))
         try:             
             data = jwt.decode(token, secret_key,algorithms=['HS256'])
-        except Exception as e:            
-            settings.TOKEN_STATUS = "Error : "+str(e)
+        except Exception as e:                        
+            if(str(e) == "Signature has expired" or str(e) == "Signature verification failed" ):
+                settings.TOKEN_STATUS = "Token has expired" 
+            else:
+                settings.TOKEN_STATUS = "Error : "+str(e)            
             return HttpResponse(json.dumps({'token_status' : settings.TOKEN_STATUS}))
         settings.TOKEN_STATUS = ""
         return f(*args, **kwargs)
@@ -91,11 +103,12 @@ def token_status(request):
     return HttpResponse(settings.TOKEN_STATUS)
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def logout(request):
-    settings.TOKEN_STATUS = ""
-    settings.TOKEN_NAME = ""
-    settings.TOKEN_KEY = ""
-    return render(request,'login.html')
+def logout(request):        
+    auth_login_time = request.GET["b9297e16791de8e8bff0fb7870682121f94fd89acfd8506be4662e238495141916eed2100b21724a35927e0e7867007c470564c80bf7d9a971d490b817a05e31"]    
+    if auth_login_time in settings.TOKEN_DIC:
+        settings.TOKEN_DIC.pop(auth_login_time)      
+    logout_success = "78661b2fac117e9c9764a46403d20579e49974a5aa004922573cf08150c16de8365196319d6662187bde83ae9d6669956a13e2ea22ddb801e15df3887b2252ec"    
+    return HttpResponse(logout_success)    
 
 @token_required
 def get_prediction_table_data(request):                           
@@ -162,8 +175,10 @@ def get_auth_token(request):
     auth_password_hash = hashlib.sha512(auth_pwd).hexdigest() 
     auth_uname = request.GET["username"].encode('utf-8')
     auth_uname_hash = hashlib.sha512(auth_uname).hexdigest() 
-    result = "Token is invalid!"   
-    settings.TOKEN_STATUS = "Token is invalid!"
+    result = ""   
+    settings.TOKEN_STATUS = "Token is invalid"
+    auth_login_time = str(datetime.datetime.utcnow())
+    auth_login_time = hashlib.sha512(auth_login_time.encode('utf-8')).hexdigest()     
     if auth_uname_hash == uname_hash and auth_password_hash == password_hash: 
         secret_key = str(uuid.uuid4().hex)        
         unique_id = str(uuid.uuid4().hex)
@@ -173,16 +188,18 @@ def get_auth_token(request):
             result = token
             settings.TOKEN_NAME = result
             settings.TOKEN_KEY = secret_key
+            settings.TOKEN_DIC[auth_login_time] = result
             settings.TOKEN_STATUS = "51e85deb51c2b909a21ec5b8e83b1cb28da258b1be227620105a345a2bd4c6aea549cd5429670f2df33324667b9f623a420b3a0bdbbd03ad48602211e75478a7"
         except Exception as e:                       
-            settings.TOKEN_STATUS = "Error : "+str(e)            
+            settings.TOKEN_STATUS = "Error : "+str(e)                        
             #return render(request,'login.html',context={'login_status':str(e) })
     else:
-        settings.TOKEN_STATUS = "Invalid User"
-    return HttpResponse(settings.TOKEN_STATUS)
-        #return render(request,'login.html',context={'login_status':"Invalid User"})        
-    #return redirect("/ed74cf28e117c5f6dc9d4b8dfd76a7728d86000884abe0bffab1b9c881e0006ca6e057331ec536449b407bb0c5d4d947caff50d94e44772eccb6e6ad155e1a71")  
-    #return render(request,'prediction.html')
+        settings.TOKEN_STATUS = "Invalid Username or Password"    
+    
+    token_result = {
+    "b9297e16791de8e8bff0fb7870682121f94fd89acfd8506be4662e238495141916eed2100b21724a35927e0e7867007c470564c80bf7d9a971d490b817a05e31":auth_login_time,
+    "45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591":settings.TOKEN_STATUS}
+    return HttpResponse(json.dumps(token_result))
 
 def get_unique_numbers(numbers):
     list_of_unique_numbers = []

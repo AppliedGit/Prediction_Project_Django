@@ -22,6 +22,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR2,'templates')
 TOKEN_NAME = ""
 TOKEN_KEY = ""
 TOKEN_STATUS = ""
+TOKEN_DIC = {}
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/

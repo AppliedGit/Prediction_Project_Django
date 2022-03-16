@@ -28,21 +28,69 @@
         }
     </style>
 <script>
+    $(document).ready(function()
+    {       
+        if(sessionStorage.getItem("45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591") != null)
+        {
+            if(sessionStorage.getItem("45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591") === "9f02f775abea162963140b0c9945229c8fd57d32563fe586540d00d6c984724ddf069e3ef3d2f147a01ce91c19836ea22e66987e33523c2fb3d90cc7bbcd28c8")
+            {
+                logout_process();
+            }
+            if(sessionStorage.getItem("45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591") != "9f02f775abea162963140b0c9945229c8fd57d32563fe586540d00d6c984724ddf069e3ef3d2f147a01ce91c19836ea22e66987e33523c2fb3d90cc7bbcd28c8")
+            {
+                $("#lbl_status").text(sessionStorage.getItem("45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591"));
+                sessionStorage.removeItem("45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591");
+            }
+            
+        }
+
+        $("#password").on('keyup', function (event) 
+        {
+            if (event.keyCode === 13) {
+                if($("#password").val() !== "")
+                {
+                    token_process() 
+                }
+                    
+            }
+           });
+            
+    });
+
+function logout_process()
+{        
+    $.ajax({
+        url: "/logout",
+        data : {"b9297e16791de8e8bff0fb7870682121f94fd89acfd8506be4662e238495141916eed2100b21724a35927e0e7867007c470564c80bf7d9a971d490b817a05e31" : sessionStorage.getItem("b9297e16791de8e8bff0fb7870682121f94fd89acfd8506be4662e238495141916eed2100b21724a35927e0e7867007c470564c80bf7d9a971d490b817a05e31")},        
+        success: function (result) 
+        {                        
+            if(result === "78661b2fac117e9c9764a46403d20579e49974a5aa004922573cf08150c16de8365196319d6662187bde83ae9d6669956a13e2ea22ddb801e15df3887b2252ec")
+            {                
+                sessionStorage.removeItem("b9297e16791de8e8bff0fb7870682121f94fd89acfd8506be4662e238495141916eed2100b21724a35927e0e7867007c470564c80bf7d9a971d490b817a05e31");
+                sessionStorage.removeItem("45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591");                                
+            }
+        }
+    });
+}
         function token_process() 
         {            
             var username = $("#username").val();
             var password = $("#password").val();            
             $.ajax({
                 url: "/get_token?username="+username+"&password="+password,                
+                dataType: "json",
                 success: function (result) 
-                {                                        
-                    if (result === "51e85deb51c2b909a21ec5b8e83b1cb28da258b1be227620105a345a2bd4c6aea549cd5429670f2df33324667b9f623a420b3a0bdbbd03ad48602211e75478a7")
-                    {
+                {    
+                    //alert(result["b9297e16791de8e8bff0fb7870682121f94fd89acfd8506be4662e238495141916eed2100b21724a35927e0e7867007c470564c80bf7d9a971d490b817a05e31"])
+                    if (result["45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591"] === "51e85deb51c2b909a21ec5b8e83b1cb28da258b1be227620105a345a2bd4c6aea549cd5429670f2df33324667b9f623a420b3a0bdbbd03ad48602211e75478a7")
+                    {                        
+                        sessionStorage.setItem("b9297e16791de8e8bff0fb7870682121f94fd89acfd8506be4662e238495141916eed2100b21724a35927e0e7867007c470564c80bf7d9a971d490b817a05e31",result["b9297e16791de8e8bff0fb7870682121f94fd89acfd8506be4662e238495141916eed2100b21724a35927e0e7867007c470564c80bf7d9a971d490b817a05e31"]);
+                        sessionStorage.setItem("45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591",result["45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591"]);
                         $("#login_form").submit();                        
                     }
                     else
                     {
-                        $("#lbl_status").text(result);
+                        $("#lbl_status").text(result["45270d7fc39f9b812bc348a10c53fe80920ca866eefc4b8e5eefe20590fa319a655ff8e571caf8e757dc83a024b6f3e02063e4780d635636f233c1e6e05f2591"]);
                     }
                 }
             });
@@ -74,7 +122,7 @@
                                     name="username"
                                     placeholder="Username"
                                     class="form-control"
-                                    id="username" value="" />                                                                      
+                                    id="username" value="admin" />                                                                      
                                 
                             </div>
                             <div class="mb-3">
@@ -83,7 +131,7 @@
                                     name="password"
                                     placeholder="password"
                                     class="form-control"
-                                    id="password"   value=""                                 
+                                    id="password"   value="Applied@12345"                                 
                                 />
                               
                             </div>                            

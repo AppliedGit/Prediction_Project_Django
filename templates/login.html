@@ -47,15 +47,10 @@
         $("#password").on('keyup', function (event) 
         {
             if (event.keyCode === 13) {
-                if($("#password").val() !== "")
-                {
-                    token_process() 
-                }
-                    
-            }
-           });
-            
-    });
+                token_process();
+             }
+           });            
+        });
 
 function logout_process()
 {        
@@ -75,7 +70,15 @@ function logout_process()
         function token_process() 
         {            
             var username = $("#username").val();
-            var password = $("#password").val();            
+            var password = $("#password").val();  
+            if(username === "")
+            {
+                $("#lbl_status").text("Enter Username");return;
+            }
+            if(password === "")
+            {
+                $("#lbl_status").text("Enter Password");return;
+            }
             $.ajax({
                 url: "/get_token?username="+username+"&password="+password,                
                 dataType: "json",
